@@ -1,3 +1,6 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import { Express } from "express";
@@ -30,7 +33,7 @@ async function comparePasswords(supplied: string, stored: string) {
 
 export function setupAuth(app: Express) {
   const sessionSettings: session.SessionOptions = {
-    secret: process.env.SESSION_SECRET!,
+    secret: process.env.SESSION_SECRET || "fallback_secret", // ✅ Fallback
     resave: false,
     saveUninitialized: false,
     store: storage.sessionStore,
@@ -49,7 +52,7 @@ export function setupAuth(app: Express) {
       } else {
         return done(null, user);
       }
-    }),
+    })
   );
 
   passport.serializeUser((user, done) => done(null, user.id));

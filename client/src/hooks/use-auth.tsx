@@ -97,6 +97,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 }
 
+// This is fine and shouldn't cause the error
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) {

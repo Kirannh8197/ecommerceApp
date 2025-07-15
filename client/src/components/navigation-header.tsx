@@ -38,7 +38,6 @@ export function NavigationHeader({ activeTab, onTabChange, onCartToggle }: Navig
           {/* Logo and Brand */}
           <div className="flex items-center">
             <h1 className="text-2xl font-bold text-gray-900">ShopAPI</h1>
-            <Badge variant="secondary" className="ml-2">Beta</Badge>
           </div>
 
           {/* Navigation Links */}

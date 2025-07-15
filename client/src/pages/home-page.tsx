@@ -6,7 +6,13 @@ import { AdminPanel } from "@/components/admin-panel";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Search } from "lucide-react";
 import type { Product, OrderWithItems } from "@shared/schema";
 
@@ -19,11 +25,11 @@ export default function HomePage() {
   const { data: products = [], isLoading: isLoadingProducts } = useQuery<Product[]>({
     queryKey: ["/api/products", searchQuery],
     queryFn: async () => {
-      const url = searchQuery 
+      const url = searchQuery
         ? `/api/products?search=${encodeURIComponent(searchQuery)}`
         : "/api/products";
       const response = await fetch(url);
-      if (!response.ok) throw new Error('Failed to fetch products');
+      if (!response.ok) throw new Error("Failed to fetch products");
       return response.json();
     },
   });
@@ -31,11 +37,16 @@ export default function HomePage() {
   const { data: orders = [] } = useQuery<OrderWithItems[]>({
     queryKey: ["/api/orders"],
     enabled: !!user,
+    queryFn: async () => {
+      const response = await fetch("/api/orders");
+      if (!response.ok) throw new Error("Failed to fetch orders");
+      return response.json();
+    },
   });
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <NavigationHeader 
+      <NavigationHeader
         activeTab={activeTab}
         onTabChange={setActiveTab}
         onCartToggle={() => setIsCartOpen(true)}
@@ -48,10 +59,14 @@ export default function HomePage() {
             <div className="mb-8">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
                 <div>
-                  <h2 className="text-3xl font-bold text-gray-900 mb-2">Product Catalog</h2>
-                  <p className="text-gray-600">Discover our collection of premium products</p>
+                  <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                    Product Catalog
+                  </h2>
+                  <p className="text-gray-600">
+                    Discover our collection of premium products
+                  </p>
                 </div>
-                
+
                 {/* Search and Filters */}
                 <div className="flex flex-col md:flex-row gap-4 mt-4 md:mt-0">
                   <div className="relative">
@@ -82,7 +97,10 @@ export default function HomePage() {
               {isLoadingProducts ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                   {Array.from({ length: 8 }).map((_, i) => (
-                    <div key={i} className="bg-white rounded-xl shadow-sm border border-gray-200 animate-pulse">
+                    <div
+                      key={i}
+                      className="bg-white rounded-xl shadow-sm border border-gray-200 animate-pulse"
+                    >
                       <div className="w-full h-48 bg-gray-300 rounded-t-xl"></div>
                       <div className="p-4">
                         <div className="h-4 bg-gray-300 rounded mb-2"></div>
@@ -111,9 +129,7 @@ export default function HomePage() {
         )}
 
         {/* Admin Panel */}
-        {activeTab === "admin" && user?.role === "admin" && (
-          <AdminPanel />
-        )}
+        {activeTab === "admin" && user?.role === "admin" && <AdminPanel />}
 
         {/* Orders Section */}
         {activeTab === "orders" && (
@@ -121,7 +137,9 @@ export default function HomePage() {
             <div className="mb-8">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
                 <div>
-                  <h2 className="text-3xl font-bold text-gray-900 mb-2">Order History</h2>
+                  <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                    Order History
+                  </h2>
                   <p className="text-gray-600">Track and manage your orders</p>
                 </div>
               </div>
@@ -134,39 +152,59 @@ export default function HomePage() {
               ) : (
                 <div className="space-y-6">
                   {orders.map((order) => (
-                    <div key={order.id} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <div
+                      key={order.id}
+                      className="bg-white rounded-xl shadow-sm border border-gray-200 p-6"
+                    >
                       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
                         <div className="flex items-center space-x-4">
                           <div>
-                            <h3 className="text-lg font-semibold text-gray-900">Order #{order.id}</h3>
+                            <h3 className="text-lg font-semibold text-gray-900">
+                              Order #{order.id}
+                            </h3>
                             <p className="text-gray-600">
-                              Placed on {new Date(order.createdAt).toLocaleDateString()}
+                              Placed on{" "}
+                              {new Date(order.createdAt).toLocaleDateString()}
                             </p>
                           </div>
                         </div>
                         <div className="flex items-center space-x-4 mt-4 md:mt-0">
-                          <span className={`px-3 py-1 text-sm font-medium rounded-full ${
-                            order.status === "completed" ? "bg-green-100 text-green-800" :
-                            order.status === "pending" ? "bg-yellow-100 text-yellow-800" :
-                            "bg-red-100 text-red-800"
-                          }`}>
-                            {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                          <span
+                            className={`px-3 py-1 text-sm font-medium rounded-full ${
+                              order.status === "completed"
+                                ? "bg-green-100 text-green-800"
+                                : order.status === "pending"
+                                ? "bg-yellow-100 text-yellow-800"
+                                : "bg-red-100 text-red-800"
+                            }`}
+                          >
+                            {order.status.charAt(0).toUpperCase() +
+                              order.status.slice(1)}
                           </span>
-                          <span className="text-xl font-bold text-gray-900">${order.total}</span>
+                          <span className="text-xl font-bold text-gray-900">
+                            ${order.total}
+                          </span>
                         </div>
                       </div>
-                      
+
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         {order.items.map((item) => (
-                          <div key={item.id} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-                            <img 
-                              src={item.product.imageUrl || "/placeholder.jpg"} 
+                          <div
+                            key={item.id}
+                            className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg"
+                          >
+                            <img
+                              src={item.product.imageUrl || "/placeholder.jpg"}
                               alt={item.product.name}
                               className="w-12 h-12 object-cover rounded-lg"
                             />
                             <div className="flex-1">
-                              <h4 className="font-medium text-gray-900">{item.product.name}</h4>
-                              <p className="text-gray-600 text-sm">Qty: {item.quantity} × ${item.price}</p>
+                              <h4 className="font-medium text-gray-900">
+                                {item.product.name}
+                              </h4>
+                              <p className="text-gray-600 text-sm">
+                                Qty: {item.quantity} × ${item.price}
+                              </p>
                             </div>
                           </div>
                         ))}

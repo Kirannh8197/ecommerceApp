@@ -62,7 +62,7 @@ export function ProductCard({ product }: ProductCardProps) {
         <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">{product.name}</h3>
         <p className="text-gray-600 text-sm mb-3 line-clamp-2">{product.description}</p>
         <div className="flex items-center justify-between">
-          <span className="text-2xl font-bold text-gray-900">${product.price}</span>
+          <span className="text-2xl font-bold text-gray-900">Rs.{product.price}</span>
           <Button
             onClick={handleAddToCart}
             disabled={addToCartMutation.isPending || product.stock === 0}
